@@ -23,7 +23,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       title: "قائمة العملاء",
     },
     {
-      href: "/setting",
+      href: "/afiliates",
       title: "قائمة المسوقين",
     },
     {
@@ -67,7 +67,12 @@ const Layout: React.FC<Props> = ({ children }) => {
     <>
       <div className="min-h-screen h-full flex flex-col">
         <div className="flex flex-col md:flex-row bg-[#eeeeee] flex-1">
-          <aside className="h-100 bg-[#333333] w-full md:w-60">
+          <aside className="h-100 bg-[#333333] w-full md:w-60"
+            // style={{
+            //   height: "90%",
+            //   overflow: "scroll"
+            // }}
+          >
             <h1 className="text-center text-white text-5xl font-blacka my-5">
               نور
             </h1>
