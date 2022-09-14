@@ -1,2 +1,2 @@
-# noor-api
-The backend of Noor applications
+# noor-dashboard 
+The dashboard of Noor application
