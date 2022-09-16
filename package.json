@@ -19,13 +19,16 @@
     "@headlessui/react": "^1.6.4",
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.5",
+    "@reduxjs/toolkit": "^1.8.5",
     "@types/react-loading-overlay": "^1.0.1",
     "axios": "^0.27.2",
     "mdb-react-ui-kit": "^4.0.0",
     "next": "12.1.6",
+    "next-redux-wrapper": "^8.0.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-loading-overlay": "^1.0.1",
+    "react-redux": "^8.0.2",
     "sweetalert2": "^11.4.17"
   },
   "devDependencies": {

@@ -1,12 +1,13 @@
-import axios from "axios"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { ReactNode, useState, useEffect } from "react"
-import constants from "../lib/constants"
-
+import { layoutState } from '../redux/Slices/LayoutSlice';
+import { useAppSelector } from "../redux/hook/hooks"
+import { useMemo } from 'react'
 interface Props {
   children?: ReactNode
 }
+
 
 const Layout: React.FC<Props> = ({ children }) => {
   const menuItems = [
@@ -55,23 +56,30 @@ const Layout: React.FC<Props> = ({ children }) => {
 
   const router = useRouter()
   const [requestCount, setRequestCount] = useState<number>(0)
-  useEffect(() => {
-    axios.get(`${constants.url}/admin/${constants.routes.fetchAllPendingRequest}`)
-      .then((data) => {
-        console.log(data)
-        setRequestCount(data.data.result)
-      })
-  }, [])
+  // useEffect(() => {
+  //   axios.get(`${constants.url}/admin/${constants.routes.fetchAllPendingRequest}`)
+  //     .then((data) => {
+
+  //       setRequestCount(data.data.result)
+  //     })
+  // }, [])
+
+  // const state = useSelector<AppState, any>(state => state.layout.requestCount)
+  const state = useAppSelector(layoutState)
+  // const state = useMemo(() => {
+  //   // console.log("hello in Layout")
+  //   return useAppSelector(layoutState)
+  // }, [])
 
   return (
     <>
       <div className="min-h-screen h-full flex flex-col">
         <div className="flex flex-col md:flex-row bg-[#eeeeee] flex-1">
           <aside className="h-100 bg-[#333333] w-full md:w-60"
-            // style={{
-            //   height: "90%",
-            //   overflow: "scroll"
-            // }}
+          // style={{
+          //   height: "90%",
+          //   overflow: "scroll"
+          // }}
           >
             <h1 className="text-center text-white text-5xl font-blacka my-5">
               نور
@@ -109,7 +117,7 @@ const Layout: React.FC<Props> = ({ children }) => {
                         // width:"40px",
                         // height:"40px"
                       }}>
-                        {requestCount}
+                        {state.requestCount}
                       </span>
                     }
                   </a>

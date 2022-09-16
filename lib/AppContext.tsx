@@ -1,5 +1,7 @@
 import axios from "axios"
 import React, { useEffect, useState } from "react"
+import FetchRequestCountApi from "../redux/AsyncThunkApi/FetchRequestCountApi"
+import { useAppDispatch } from "../redux/hook/hooks"
 import constants from "./constants"
 import { AuthContext, User } from "./context/AuthContext"
 
@@ -13,14 +15,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(initialState)
 
   const set = (user: User) => setUser(user)
-
+  const dispatch = useAppDispatch()
   useEffect(() => {
     if (typeof window !== "undefined") {
       const user = localStorage.getItem("user")
       if (user) {
         set(JSON.parse(user))
+        // console.log("Hello Mohammed Gamal")
+        dispatch(FetchRequestCountApi())
       }
     }
+
+
   }, [])
 
   const get = async (route: string) => {

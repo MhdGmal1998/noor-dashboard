@@ -39,7 +39,7 @@ const Login: NextPage = () => {
       await login(username, password)
       setLoading(false)
     } catch (err: any) {
-      if (err.response.data.error) setError(err.response.data.error)
+      if (err.response?.data.error) setError(err.response.data.error)
       else setError(err.message)
       setLoading(false)
     }
