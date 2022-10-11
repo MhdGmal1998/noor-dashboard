@@ -11,7 +11,7 @@ import { Provider } from "../providers"
 interface GeneratePointsInterface {
   provider: Provider
 }
-const GeneratePoints: NextPage<GeneratePointsInterface> = ({}) => {
+const GeneratePoints: NextPage<GeneratePointsInterface> = ({ }) => {
   const router = useRouter()
   const [provider, setProvider] = useState<Provider>()
   const [isLoading, setIsLoading] = useState(false)
@@ -28,15 +28,15 @@ const GeneratePoints: NextPage<GeneratePointsInterface> = ({}) => {
 
 
   const createNewWallet = async () => {
-	if(!provider || !user) return
-	const answer = await Swal.fire({
-	  title: "تأكيد",
-	  text:         `سيتم إنشاء محفظة جديدة بحافز ${bonus} ومبلغ ${amount} لمزود الخدمة ${provider.businessName}`,
-	  showCancelButton: true,
-	  cancelButtonText: "إلغاء",
-	  confirmButtonText: "تأكيد"
-	})
-	if(answer.isConfirmed) {
+    if (!provider || !user) return
+    const answer = await Swal.fire({
+      title: "تأكيد",
+      text: `سيتم إنشاء محفظة جديدة بحافز ${bonus} ومبلغ ${amount} لمزود الخدمة ${provider.businessName}`,
+      showCancelButton: true,
+      cancelButtonText: "إلغاء",
+      confirmButtonText: "تأكيد"
+    })
+    if (answer.isConfirmed) {
       const response = await axios.post(
         `${constants.url}/admin/generateCredit`,
         {
@@ -56,6 +56,7 @@ const GeneratePoints: NextPage<GeneratePointsInterface> = ({}) => {
           text: "تم إنشاء النقاط بنجاح",
           icon: "success",
         })
+        // setIsLoading(true)
         setAmount(0)
         axios
           .get(`${constants.url}/admin/providers/${provider.id}`, {
@@ -72,14 +73,59 @@ const GeneratePoints: NextPage<GeneratePointsInterface> = ({}) => {
           })
         return setIsLoading(false)
       }
-	}
+    }
   }
+
+
+  const SetMountChange = (event) => {
+    const value = event.target.value
+    setAmount(value)
+  }
+  const SetFeeChange = (event) => {
+    const value = event.target.value
+    if (value > 100) {
+      Swal.fire({
+        title: 'قيمة كبيرة',
+        text: 'لا يمكنك اضافة نسبة اكبر من 100 ',
+        icon: 'error'
+      })
+      return
+    }
+    else
+      setFees(value)
+  }
+  const SetBounsChange = (event) => {
+    const value = event.target.value
+    if (value > 100) {
+      Swal.fire({
+        title: 'قيمة كبيرة',
+        text: 'لا يمكنك اضافة نسبة اكبر من 100 ',
+        icon: 'error'
+      })
+      return
+    }
+    else
+      setBonus(value)
+    // else if (isNumber(event.target.value)) {
+    //   setBonus(value)
+    // }
+    // else {
+    //   Swal.fire({
+    //     title: 'مدخل خاطى',
+    //     text: 'يرجى ادخال قيمة صحيحية',
+    //     icon: 'error'
+    //   })
+    //   return
+    // }
+
+  }
+
 
   const handleSubmit = async () => {
     if (!user) return
-    setIsLoading(true)
+
     try {
-	  if (!provider) throw new Error("Provider not found")
+      if (!provider) throw new Error("Provider not found")
       if (!amount || amount < 0) {
         Swal.fire({
           title: "خطأ",
@@ -88,42 +134,53 @@ const GeneratePoints: NextPage<GeneratePointsInterface> = ({}) => {
         })
         throw new Error("no amount")
       }
-      if (!bonus || bonus < 0) {
-        Swal.fire({
-          title: "خطأ",
-          text: "يرجى إدخال قيمة للخصم",
-          icon: "error",
-        })
-        throw new Error("no bonus")
-      }
+      // if (!bonus || bonus < 0) {
+      //   Swal.fire({
+      //     title: "خطأ",
+      //     text: "يرجى إدخال قيمة للخصم",
+      //     icon: "error",
+      //   })
+      //   throw new Error("no bonus")
+      // }
       const wallet = provider.account.wallets.find((w) => w.bonus === bonus)
-	  if(!wallet || (wallet.status === "ACTIVE")) {
-		return await createNewWallet()
-	  }
-	  // there is a wallet!
-	  const response = await Swal.fire({
+      if (wallet) {
+        Swal.fire({
+          title: 'محفظة موجودة من قبل ',
+          text: 'هذه المحفظة موجودة مسبقا',
+          icon: 'error'
+        })
+        return;
+      }
+
+
+      if (!wallet || (wallet.status === "ACTIVE")) {
+        return await createNewWallet()
+      }
+      // there is a wallet!
+      const response = await Swal.fire({
         title: "تأكيد",
         text: `هذه المحفظة معطّلة, هل تريد انشاء محفظة جديدة أم تفعيلها؟`,
         showCancelButton: true,
-		showDenyButton: true,
-		denyButtonText: "تنشيط المحفظة",
+        showDenyButton: true,
+        denyButtonText: "تنشيط المحفظة",
         cancelButtonText: "إلغاء",
         confirmButtonText: "إنشاء محفظة جديدة",
-	  })
-	  if(response.isConfirmed) {
-		createNewWallet()
-	  }
-	  else if(response.isDenied) {
-		// activate wallet
-		await post("admin/activatewallet", {walletId: wallet.id})
-			Swal.fire({
-			  title: "تم تفعيل المحفظة بنجاح",
-			  icon: "success",
-			  timer: 2000,
-			  position: "bottom-start",
-			})
-		return	router.push("/")
-	  }
+      })
+      if (response.isConfirmed) {
+        createNewWallet()
+      }
+      else if (response.isDenied) {
+        // activate wallet
+        await post("admin/activatewallet", { walletId: wallet.id })
+        Swal.fire({
+          title: "تم تفعيل المحفظة بنجاح",
+          icon: "success",
+          timer: 2000,
+          position: "bottom-start",
+        })
+        setIsLoading(true)
+        return router.push("/")
+      }
     } catch (err: any) {
       setIsLoading(false)
     }
@@ -226,27 +283,27 @@ const GeneratePoints: NextPage<GeneratePointsInterface> = ({}) => {
                   <div className="mx-5 my-2">
                     <label htmlFor="amount">الكميّة: </label>
                     <input
-                      type="number"
+                      type="text"
                       value={amount}
-                      onChange={(e) => setAmount(Number(e.target.value))}
+                      onChange={(e) => SetMountChange(e)}
                       className="focus:border-none w-1/2 block rounded-sm px-2 py-1 bg-[#eeeeee]"
                     />
                   </div>
                   <div className="mx-5 my-2">
                     <label htmlFor="amount">نسبة الحافز% : </label>
                     <input
-                      type="number"
+                      type="text"
                       value={bonus}
-                      onChange={(e) => setBonus(Number(e.target.value))}
+                      onChange={(e) => SetBounsChange(e)}
                       className="focus:border-none block w-1/2 px-2 py-1 bg-[#eeeeee]"
                     />
                   </div>
                   <div className="mx-5 my-2">
                     <label htmlFor="fees">نسبة النظام% : </label>
                     <input
-                      type="number"
+                      type="text"
                       value={fees}
-                      onChange={(e) => setFees(Number(e.target.value))}
+                      onChange={(e) => SetFeeChange(e)}
                       className="focus:border-none block w-1/2 px-2 py-1 bg-[#eeeeee]"
                     />
                   </div>

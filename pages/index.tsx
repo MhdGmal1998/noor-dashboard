@@ -12,7 +12,6 @@ import trxTypeToString from "../util/trxTypeToString"
 const Home: NextPage = () => {
   // #TODO any
   const [data, setData] = useState<any>()
-
   const router = useRouter()
   const { user, logout } = useContext(AuthContext)
 
@@ -27,6 +26,7 @@ const Home: NextPage = () => {
         })
         .then((res) => {
           setData(res.data)
+          console.log(res.data)
         })
         .catch((err) => {
           logout()
